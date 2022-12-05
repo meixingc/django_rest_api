@@ -580,9 +580,50 @@ class SongSerializer(serializers.HyperlinkedModelSerializer):
 We need to configure CORS in order for other applications to use the API we just
 created.
 
-This is outside of the scope of today's lesson, but it's super simple!
+in the INSTALLED_APPS part of our Settings.py, lets put in
+```
+'corsheaders'
+```
 
-The [Django Rest Documentation page on AJAX](https://www.django-rest-framework.org/topics/ajax-csrf-cors/) is a great place to get started. It endorses the [Django Cors Headers](https://github.com/ottoyiu/django-cors-headers/) middleware, which can be installed like any other dependency with `pipenv` and is configured in the Project's `settings.py`.
+and lets run a command to install the necessary dependencies
+
+```
+pip install django-cors-headers
+```
+
+
+In our MIDDLEWARE section, lets add these two lines toward the top of the block, so that they can be run before we go through the other parts of the Django framework:
+
+```
+MIDDLEWARE = [
+    ...,
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    ...,
+]
+```
+
+Next, we will set which ports we will allow in. Once you have a deployed React App, you can add that URL in. For now, as we are just working with Localhost:3000, we'll put that in
+```
+CORS_ALLOWED_ORIGINS = [
+    "https://example.com",
+    "https://sub.example.com",
+    "http://localhost:8080",
+    "http://127.0.0.1:9000",
+]
+
+```
+
+
+We can also swap that part out for this. Your OS and Python versions may differ, so if one does not work, please try the other!
+
+```
+CORS_ALLOW_ALL_ORIGINS = True
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000"
+]
+```
 
 ## More!
 
