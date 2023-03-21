@@ -575,6 +575,55 @@ class SongSerializer(serializers.HyperlinkedModelSerializer):
 ```
 
 
+But wait! When we see our data, it only returns the Hyperlink, "localhost:8000/artists/1"... That doesn't work too well for our users
+Lets change our serializers so that when we load up our data, we can see the actual names of our data!
+
+First, lets put our child object before the parent object, then lets change up that 'songs' property in the ArtistSerializer to actually show the Song Serializer!
+
+```
+
+
+class SongSerializer(serializers.HyperlinkedModelSerializer):
+    artist = serializers.HyperlinkedRelatedField(
+        view_name='artist_detail',
+        read_only=True
+    )
+
+    artist_id = serializers.PrimaryKeyRelatedField(
+        queryset=Artist.objects.all(),
+        source='artist'
+    )
+
+    class Meta:
+        model = Song
+        fields = ('id', 'artist', 'artist_id', 'title', 'album', 'preview_url')
+        
+ 
+ class ArtistSerializer(serializers.HyperlinkedModelSerializer):
+     song = SongSerializer(
+        many = True,
+        read_only = True
+    )
+
+   artist_url = serializers.ModelSerializer.serializer_url_field(
+   view_name='artist_detail'
+   )
+
+    class Meta:
+        model = Artist
+
+   fields = ('id', 'artist_url', 'photo_url', 'nationality', 'name', 'songs',)
+        
+       
+```
+
+Now, when we load up our Artists, we'll be able to see all of our attached sons by their Titles, instead of their hyperlinked urls!
+
+
+
+
+
+
 ## CORS
 
 We need to configure CORS in order for other applications to use the API we just
